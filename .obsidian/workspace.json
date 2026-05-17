@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Reddit Source.md",
+                "file": "Investigation/Github Repositories.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Reddit Source"
+              "title": "Github Repositories"
             }
           }
         ]
@@ -185,8 +185,10 @@
   },
   "active": "57bc8330fd20ab50",
   "lastOpenFiles": [
+    "Investigation/Rust on AWS Lambda? (Reddit).md",
+    "Investigation/Github Repositories.md",
+    "Investigation",
     "README.md",
-    "LAMBDA_INTRO.md",
-    "Reddit Source.md"
+    "Investigation/LAMBDA_INTRO.md"
   ]
 }

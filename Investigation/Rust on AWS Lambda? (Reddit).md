@@ -1,4 +1,4 @@
-# Rust on AWS Lambda?
+SoRust# Rust on AWS Lambda?
 
 Me and couple buddies are doing a project; the backend portion was written in Rust, which we intend to run as a lambda function on AWS. I'm completely new to Rust, as I was not the one who wrote the program for it in our group project, and was wondering how it worked when it comes to running it on AWS Lambda. I've been noticing people talking about how fast it is on the service, which makes it all the more desirable. A general structure that explains how to add AWS setup onto a Rust program with existing code would be very helpful. I've seen various videos which give me a general gist, but as a whole I'm unable to conceptualize the process. Any help would be very, very much appreciated! Thanks!
 
