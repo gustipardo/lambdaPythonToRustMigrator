@@ -50,8 +50,20 @@ Each migration ~1k-3k tokens input + output ≈ $0.003–0.01 per call. ~1500–
 
 ## Key Files
 
-- `CLAUDE.md` — this file
-- `ARCHITECTURE.md` — system design, screens, endpoint contract, demo examples spec
+- `CLAUDE.md` — this file (Claude reads this automatically on project open)
+- `ARCHITECTURE.md` — system design, screens, endpoint contract, design tokens, all stack decisions with rationale
 - `SIDE_FEATURES.md` — out-of-scope ideas
-- `Investigation/` — research notes
-- `Investigation/FEASIBILITY.md` — idea validation research
+- `Investigation/FEASIBILITY.md` — idea validation, risks, LLM pipeline, output testing decision
+- `README.md` — full project overview for humans and onboarding
+
+## Guidance for Claude When Coding
+
+- **Before adding any feature:** check `SIDE_FEATURES.md`. If it's there, don't build it.
+- **Backend `main.py`:** keep as a single file. No splitting into modules unless it exceeds ~200 lines.
+- **Claude API calls:** always use the system prompt as a cached block (`cache_control: ephemeral`). Never skip caching — the $15 budget depends on it.
+- **Frontend components:** use shadcn/ui primitives first. Only write custom Tailwind if shadcn doesn't cover it.
+- **Demo examples:** stored as JSON in `backend/examples/`. Never hardcode them in Python or JS.
+- **Metrics in custom mode:** always mark `"estimated": true`. Never fabricate real benchmark numbers for user-submitted code.
+- **No TypeScript `any`.** No `// eslint-disable`. Fix the type, don't suppress it.
+- **CORS:** FastAPI backend must allow the Vite dev origin (`localhost:5173`).
+- **Error states:** show them in the UI. Never silently swallow API errors.
