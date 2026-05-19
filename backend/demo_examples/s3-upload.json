@@ -1,0 +1,11 @@
+{
+  "id": "s3-upload",
+  "label": "S3 Upload",
+  "python_code": "import boto3\nimport os\n\ns3 = boto3.client('s3')\n\ndef lambda_handler(event, context):\n    bucket = os.environ['BUCKET_NAME']\n    key = event['key']\n    body = event['body']\n    s3.put_object(Bucket=bucket, Key=key, Body=body)\n    return {'statusCode': 200, 'body': f'Uploaded {key} to {bucket}'}\n",
+  "rust_code": "// main.rs\nuse aws_lambda_events::event::apigw::ApiGatewayProxyRequest;\nuse aws_sdk_s3::Client;\nuse lambda_runtime::{run, service_fn, Error, LambdaEvent};\nuse serde_json::{json, Value};\nuse std::env;\n\n#[tokio::main]\nasync fn main() -> Result<(), Error> {\n    let config = aws_config::load_from_env().await;\n    let s3 = Client::new(&config);\n    run(service_fn(|event: LambdaEvent<Value>| handler(&s3, event))).await\n}\n\nasync fn handler(s3: &Client, event: LambdaEvent<Value>) -> Result<Value, Error> {\n    let bucket = env::var(\"BUCKET_NAME\")?;\n    let key = event.payload[\"key\"].as_str().ok_or(\"missing key\")?;\n    let body = event.payload[\"body\"].as_str().unwrap_or(\"\").to_owned();\n    s3.put_object()\n        .bucket(&bucket)\n        .key(key)\n        .body(body.into_bytes().into())\n        .send()\n        .await?;\n    Ok(json!({ \"statusCode\": 200, \"body\": format!(\"Uploaded {} to {}\", key, bucket) }))\n}\n",
+  "cargo_toml": "[package]\nname = \"s3-upload\"\nversion = \"0.1.0\"\nedition = \"2021\"\n\n[[bin]]\nname = \"bootstrap\"\npath = \"src/main.rs\"\n\n[dependencies]\naws-config = \"1\"\naws-sdk-s3 = \"1\"\naws-lambda-events = { version = \"0.15\", default-features = false, features = [\"apigw\"] }\nlambda_runtime = \"0.12\"\nserde_json = \"1\"\ntokio = { version = \"1\", features = [\"full\"] }\n",
+  "metrics": {
+    "python": { "init_ms": 260, "duration_ms": 15699, "memory_mb": 140 },
+    "rust":   { "init_ms": 38,  "duration_ms": 6452,  "memory_mb": 85 }
+  }
+}

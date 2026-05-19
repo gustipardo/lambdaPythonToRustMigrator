@@ -1,0 +1,11 @@
+{
+  "id": "sqs-send",
+  "label": "SQS Send Message",
+  "python_code": "import boto3\nimport os\n\nsqs = boto3.client('sqs')\n\ndef lambda_handler(event, context):\n    queue_url = os.environ['QUEUE_URL']\n    message = event['message']\n    sqs.send_message(QueueUrl=queue_url, MessageBody=message)\n    return {'statusCode': 200, 'body': 'Message sent'}\n",
+  "rust_code": "// main.rs\nuse aws_sdk_sqs::Client;\nuse lambda_runtime::{run, service_fn, Error, LambdaEvent};\nuse serde_json::{json, Value};\nuse std::env;\n\n#[tokio::main]\nasync fn main() -> Result<(), Error> {\n    let config = aws_config::load_from_env().await;\n    let sqs = Client::new(&config);\n    run(service_fn(|event: LambdaEvent<Value>| handler(&sqs, event))).await\n}\n\nasync fn handler(sqs: &Client, event: LambdaEvent<Value>) -> Result<Value, Error> {\n    let queue_url = env::var(\"QUEUE_URL\")?;\n    let message = event.payload[\"message\"].as_str().ok_or(\"missing message\")?;\n    sqs.send_message()\n        .queue_url(&queue_url)\n        .message_body(message)\n        .send()\n        .await?;\n    Ok(json!({ \"statusCode\": 200, \"body\": \"Message sent\" }))\n}\n",
+  "cargo_toml": "[package]\nname = \"sqs-send\"\nversion = \"0.1.0\"\nedition = \"2021\"\n\n[[bin]]\nname = \"bootstrap\"\npath = \"src/main.rs\"\n\n[dependencies]\naws-config = \"1\"\naws-sdk-sqs = \"1\"\nlambda_runtime = \"0.12\"\nserde_json = \"1\"\ntokio = { version = \"1\", features = [\"full\"] }\n",
+  "metrics": {
+    "python": { "init_ms": 280, "duration_ms": 5400, "memory_mb": 136 },
+    "rust":   { "init_ms": 32,  "duration_ms": 2100,  "memory_mb": 80 }
+  }
+}

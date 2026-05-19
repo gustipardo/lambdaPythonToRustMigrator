@@ -1,0 +1,11 @@
+{
+  "id": "http-handler",
+  "label": "HTTP Handler (API Gateway)",
+  "python_code": "import json\n\ndef lambda_handler(event, context):\n    name = event.get('queryStringParameters', {}).get('name', 'world')\n    return {\n        'statusCode': 200,\n        'headers': {'Content-Type': 'application/json'},\n        'body': json.dumps({'message': f'Hello, {name}!'})\n    }\n",
+  "rust_code": "// main.rs\nuse aws_lambda_events::event::apigw::{ApiGatewayProxyRequest, ApiGatewayProxyResponse};\nuse aws_lambda_events::encodings::Body;\nuse lambda_runtime::{run, service_fn, Error, LambdaEvent};\nuse serde_json::json;\nuse std::collections::HashMap;\n\n#[tokio::main]\nasync fn main() -> Result<(), Error> {\n    run(service_fn(handler)).await\n}\n\nasync fn handler(event: LambdaEvent<ApiGatewayProxyRequest>) -> Result<ApiGatewayProxyResponse, Error> {\n    let name = event\n        .payload\n        .query_string_parameters\n        .first(\"name\")\n        .unwrap_or(\"world\");\n    let mut headers = HashMap::new();\n    headers.insert(\"Content-Type\".to_string(), \"application/json\".to_string());\n    Ok(ApiGatewayProxyResponse {\n        status_code: 200,\n        headers: headers.into(),\n        multi_value_headers: Default::default(),\n        body: Some(Body::Text(json!({ \"message\": format!(\"Hello, {}!\", name) }).to_string())),\n        is_base64_encoded: false,\n    })\n}\n",
+  "cargo_toml": "[package]\nname = \"http-handler\"\nversion = \"0.1.0\"\nedition = \"2021\"\n\n[[bin]]\nname = \"bootstrap\"\npath = \"src/main.rs\"\n\n[dependencies]\naws-lambda-events = { version = \"0.15\", default-features = false, features = [\"apigw\"] }\nlambda_runtime = \"0.12\"\nserde_json = \"1\"\ntokio = { version = \"1\", features = [\"full\"] }\n",
+  "metrics": {
+    "python": { "init_ms": 180, "duration_ms": 2100, "memory_mb": 128 },
+    "rust":   { "init_ms": 8,   "duration_ms": 430,  "memory_mb": 22 }
+  }
+}

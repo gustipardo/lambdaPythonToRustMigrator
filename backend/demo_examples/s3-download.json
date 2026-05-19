@@ -1,0 +1,11 @@
+{
+  "id": "s3-download",
+  "label": "S3 Download",
+  "python_code": "import boto3\nimport os\n\ns3 = boto3.client('s3')\n\ndef lambda_handler(event, context):\n    bucket = os.environ['BUCKET_NAME']\n    key = event['key']\n    response = s3.get_object(Bucket=bucket, Key=key)\n    content = response['Body'].read().decode('utf-8')\n    return {'statusCode': 200, 'body': content}\n",
+  "rust_code": "// main.rs\nuse aws_sdk_s3::Client;\nuse lambda_runtime::{run, service_fn, Error, LambdaEvent};\nuse serde_json::{json, Value};\nuse std::env;\n\n#[tokio::main]\nasync fn main() -> Result<(), Error> {\n    let config = aws_config::load_from_env().await;\n    let s3 = Client::new(&config);\n    run(service_fn(|event: LambdaEvent<Value>| handler(&s3, event))).await\n}\n\nasync fn handler(s3: &Client, event: LambdaEvent<Value>) -> Result<Value, Error> {\n    let bucket = env::var(\"BUCKET_NAME\")?;\n    let key = event.payload[\"key\"].as_str().ok_or(\"missing key\")?;\n    let obj = s3.get_object().bucket(&bucket).key(key).send().await?;\n    let bytes = obj.body.collect().await?.into_bytes();\n    let content = String::from_utf8(bytes.to_vec())?;\n    Ok(json!({ \"statusCode\": 200, \"body\": content }))\n}\n",
+  "cargo_toml": "[package]\nname = \"s3-download\"\nversion = \"0.1.0\"\nedition = \"2021\"\n\n[[bin]]\nname = \"bootstrap\"\npath = \"src/main.rs\"\n\n[dependencies]\naws-config = \"1\"\naws-sdk-s3 = \"1\"\nlambda_runtime = \"0.12\"\nserde_json = \"1\"\ntokio = { version = \"1\", features = [\"full\"] }\n",
+  "metrics": {
+    "python": { "init_ms": 245, "duration_ms": 12300, "memory_mb": 138 },
+    "rust":   { "init_ms": 35,  "duration_ms": 5100,  "memory_mb": 82 }
+  }
+}
