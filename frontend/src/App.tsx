@@ -1,6 +1,7 @@
 import { useRef, useEffect, useState } from 'react'
 import { ArrowRight, Zap } from 'lucide-react'
 import { MigrationTool } from './components/MigrationTool'
+import { HeroVisual } from './components/HeroVisual'
 
 const BENCH = [
   { idx: '01', name: 'HTTP Handler',  desc: 'API Gateway passthrough', python: 180, rust: 8  },
@@ -62,6 +63,8 @@ export default function App() {
               <strong>aws-lambda-rust-runtime</strong>.
               Real benchmark numbers. No setup required.
             </p>
+
+            <HeroVisual />
 
             <div className="stat-grid">
               <div className="stat-card">
