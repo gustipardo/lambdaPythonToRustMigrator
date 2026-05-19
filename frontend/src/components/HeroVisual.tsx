@@ -94,16 +94,15 @@ export function HeroVisual() {
         <text x="260" y="322" fontFamily="JetBrains Mono, monospace" fontSize="13" fill="#A55A3D" fontWeight="600">140MB</text>
 
         {/* ── Center arrow ── */}
-        {/* Glow ring */}
-        <circle cx="430" cy="170" r="32" fill="#B87826" fillOpacity="0.08" />
-        <circle cx="430" cy="170" r="24" fill="#B87826" fillOpacity="0.12" />
+        {/* Label above the circle */}
+        <text x="430" y="142" fontFamily="JetBrains Mono, monospace" fontSize="10" fill="#B87826" textAnchor="middle" opacity="0.75">Claude Sonnet</text>
+        {/* Glow rings centered at true content midpoint */}
+        <circle cx="430" cy="170" r="30" fill="#B87826" fillOpacity="0.08" />
+        <circle cx="430" cy="170" r="21" fill="#B87826" fillOpacity="0.13" />
         {/* Arrow shaft */}
-        <line x1="396" y1="170" x2="458" y2="170" stroke="url(#arrowGrad)" strokeWidth="2.5" strokeLinecap="round" />
-        {/* Arrow head */}
-        <polyline points="448,160 462,170 448,180" fill="none" stroke="#B87826" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-        {/* Claude label */}
-        <text x="430" y="212" fontFamily="JetBrains Mono, monospace" fontSize="10" fill="#B87826" textAnchor="middle" opacity="0.8">Claude</text>
-        <text x="430" y="226" fontFamily="JetBrains Mono, monospace" fontSize="10" fill="#B87826" textAnchor="middle" opacity="0.8">Sonnet</text>
+        <line x1="400" y1="170" x2="453" y2="170" stroke="url(#arrowGrad)" strokeWidth="2.5" strokeLinecap="round" />
+        {/* Arrow head — tip at circle edge, vertically centered on y=170 */}
+        <polyline points="443,161 457,170 443,179" fill="none" stroke="#B87826" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
 
         {/* ── Right panel: Rust ── */}
         <g filter="url(#shadow)">
