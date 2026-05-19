@@ -16,12 +16,20 @@ No auth. No DB. No storage. Stateless.
 - No comments unless WHY is non-obvious.
 - No unused abstractions.
 
-## Stack
+## Stack (locked — see ARCHITECTURE.md for rationale)
 
-- **Frontend**: React + Tailwind (SaaS landing page feel)
-- **Backend**: Node.js or Python FastAPI (thin API layer)
-- **LLM**: Anthropic Claude API (claude-sonnet-4-6) — $15 budget
-- **Migration pipeline**: prompt-based code translation via Claude API
+- **Frontend**: React + Vite + TypeScript + Tailwind
+- **Components**: shadcn/ui (components live in repo, full control)
+- **Charts**: Recharts
+- **Backend**: FastAPI Python 3.11 (single file, async, Anthropic SDK native)
+- **LLM**: Claude Sonnet 4.6 + prompt caching — $15 budget
+- **Theme**: Light-first. Warm paper `#FAF7F1`, amber accent `#B87826`
+- **NOT using**: Next.js (no SSR/routing needed), Astro (too much interactivity for islands), Monaco (side feature), any DB
+
+## Infrastructure
+
+- AWS account: ready to use (for running demo benchmarks if needed)
+- No deployment to cloud required for the demo — local Vite dev + uvicorn is enough
 
 ## Priority Features (must ship)
 

@@ -174,3 +174,26 @@ Haiku as fallback if we want to cut costs 70% post-demo.
 | Demo impact | 9/10 | Cold start numbers are compelling |
 
 **Overall: Build it.**
+
+---
+
+## Key Decision: Should We Test Output Equality?
+
+**Question:** Should the system verify that the Rust output produces identical results to the Python input?
+
+Three options were evaluated:
+
+**Option A — Code migration only (rejected)**
+LLM generates Rust, show estimated metrics. No execution.
+Risk: no proof the output is correct.
+
+**Option B — Dynamic execution sandbox (rejected)**
+Run Python + compile Rust + compare outputs.
+Problem: Rust compilation takes ~30s, needs Docker sandbox, massive scope increase. Killed the timeline.
+
+**Option C — Hybrid approach (chosen ✅)**
+- **Demo mode:** 5 examples from alfonsof repo, pre-migrated and manually verified before deploy. Real AWS benchmark numbers shown (not estimated). Trustworthy because we control and validate them.
+- **Custom mode:** LLM migration only, no execution. Visible disclaimer: "AI-generated. Review before deploying."
+
+This gives credible proof-of-concept (demo mode) without sandbox complexity (custom mode).
+The demo numbers are real. The custom mode is clearly labeled as AI-assisted, unvalidated output.
