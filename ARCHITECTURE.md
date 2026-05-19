@@ -180,13 +180,21 @@ Numbers sourced from: confessionsofadataguy.com blog post + paiml.com benchmarks
 
 | Layer | Tech | Reason |
 |-------|------|--------|
-| Frontend | React + Vite + Tailwind | Page is highly interactive (tabs, editor, charts, API calls) — Astro adds complexity for zero gain |
-| Charts | Recharts | Lightweight, React-native, no config hell |
+| Frontend | React + Vite (TypeScript) | Highly interactive — Astro/Next.js add overhead for zero functional gain |
+| Components | shadcn/ui + Tailwind | Already referenced in design system. Components live in repo, full token control |
+| Charts | Recharts | Lightweight, React-native |
 | Code editor | `<textarea>` monospace | Monaco is a side feature |
-| Backend | FastAPI (Python 3.11) | One file, async, Anthropic SDK native, faster than Express for this |
+| Backend | FastAPI (Python 3.11) | One file, async, Anthropic SDK native |
 | LLM | Claude Sonnet 4.6 + prompt caching | Best code quality, existing $15 credit |
-| Demo data | Static JSON files in `backend/examples/` | No DB needed |
+| Demo data | Static JSON in `backend/examples/` | No DB needed |
 | Deployment | Vite dev + uvicorn | No cloud needed for demo |
+
+### Why NOT Next.js
+No SSR needed. No API routes needed (FastAPI handles backend). No file-based routing (single page).
+Next.js would add `next.config.js` overhead and 0 functional value. Vite bootstraps in 2 min.
+
+### Why shadcn/ui
+The `_design/` tokens file already targets shadcn/ui. Components are copied into the repo — no dependency lock-in, full Tailwind customization. We need ~5 components: Button, Card, Tabs, Badge, Separator.
 
 ### Why NOT Astro
 Astro wins for content-heavy, mostly-static pages with isolated interactive widgets.
@@ -216,20 +224,24 @@ Demo examples could be bundled in frontend JSON, but keeping them in backend mak
 `_design/` is gitignored — internal reference only. Key decisions to apply:
 
 ### Visual style: "Editorial Dev-Tool"
-Dark-first. Linear + Readwise aesthetic. Navy deep base, Amber accent. No glassmorphism, no gradients, no AI-hype aurora meshes.
+**Light-first** (user preference). Warm paper base, Amber accent. Linear + Readwise aesthetic.
+No glassmorphism, no gradients, no AI-hype aurora meshes.
 
-### Palette (dark mode default)
+### Palette (light mode — PRIMARY)
 | Role | Token | Hex |
 |------|-------|-----|
-| Background | `bg-base` | `#0B1020` |
-| Surface cards | `surface-2` | `#1A2339` |
-| Surface hover | `surface-3` | `#24304A` |
-| Text primary | `text-primary` | `#E8EAF0` |
-| Text secondary | `text-secondary` | `#A6ADBE` |
-| Accent (CTA, links) | `accent-default` | `#E4A13F` |
-| Border | `border-default` | `#2A3250` |
-| Success | `success-default` | `#6B9B7E` |
-| Error | `error-default` | `#C67B5C` |
+| Background | `bg-base` | `#FAF7F1` — warm off-white, NOT pure white |
+| Surface cards | `surface-2` | `#EDE8DB` |
+| Surface hover | `surface-3` | `#E3DCC9` |
+| Text primary | `text-primary` | `#11182A` |
+| Text secondary | `text-secondary` | `#3E4560` |
+| Text tertiary | `text-tertiary` | `#6E7791` |
+| Accent (CTA, links) | `accent-default` | `#B87826` — darker amber for light bg contrast |
+| Accent hover | `accent-hover` | `#A86C22` |
+| Border | `border-default` | `#D8CFBC` |
+| Border subtle | `border-subtle` | `#E8E2D2` |
+| Success | `success-default` | `#4A7B5C` |
+| Error | `error-default` | `#A55A3D` |
 
 ### Typography
 - **Display/headings:** Fraunces (serif) — editorial weight
