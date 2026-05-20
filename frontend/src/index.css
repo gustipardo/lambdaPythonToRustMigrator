@@ -836,3 +836,75 @@ body {
 
 /* Selection on dark code */
 .code-pre ::selection { background: rgba(184, 120, 38, 0.32); color: #fff; }
+
+/* ───────── Responsive ───────── */
+
+@media (max-width: 768px) {
+  .container { padding: 0 18px; }
+
+  /* Nav */
+  .nav-link { display: none; }
+  .nav-right { gap: 0; }
+
+  /* Hero */
+  .hero { padding: 48px 0 60px; }
+  .display { font-size: 42px; }
+  .hero-sub { font-size: 15px; }
+  .stat-grid { grid-template-columns: repeat(2, 1fr); max-width: 100%; }
+  .hero-cta-row { flex-direction: column; align-items: stretch; gap: 10px; }
+  .hero-cta-row .btn-primary,
+  .hero-cta-row .btn-ghost { justify-content: center; }
+
+  /* Sections */
+  .section { padding: 56px 0; }
+  .section-title { font-size: 28px; }
+  .section-head { max-width: 100%; }
+
+  /* Benchmarks */
+  .bench-card { overflow-x: auto; }
+  .bench-head,
+  .bench-row { min-width: 480px; }
+
+  /* Demo panel */
+  .demo-panel { padding: 16px; }
+  .demo-selector-row { flex-direction: column; align-items: flex-start; }
+  .dropdown { max-width: 100%; }
+  .demo-meta { display: none; }
+
+  /* Code split */
+  .code-split { grid-template-columns: 1fr; }
+
+  /* Custom panel */
+  .custom-panel { padding: 16px; }
+  .custom-grid { grid-template-columns: 1fr; }
+  .custom-textarea { min-height: 200px; resize: none; }
+
+  /* Metrics */
+  .metrics-panel { grid-template-columns: 1fr; }
+  .metric-cell { border-right: none; border-bottom: 1px solid var(--border); }
+  .metric-cell:last-child { border-bottom: none; }
+
+  /* Steps */
+  .steps-grid { grid-template-columns: 1fr; }
+
+  /* Tool tabs */
+  .tool-status { display: none; }
+
+  /* Footer */
+  .footer-row { flex-direction: column; gap: 8px; text-align: center; }
+
+  /* Custom foot */
+  .custom-foot { flex-direction: column; align-items: flex-start; }
+}
+
+@media (max-width: 480px) {
+  .container { padding: 0 14px; }
+  .display { font-size: 32px; }
+  .hero { padding: 36px 0 48px; }
+  .section { padding: 44px 0; }
+  .section-title { font-size: 24px; }
+  .hero-sub { font-size: 14px; margin-bottom: 28px; }
+  .stat-grid { grid-template-columns: 1fr; }
+  .brand-word { font-size: 16px; }
+  .stat-value { font-size: 32px; }
+}
