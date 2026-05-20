@@ -2,12 +2,13 @@ import json
 import os
 import re
 from pathlib import Path
+from typing import Literal
 
 import anthropic
 from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
+from pydantic import BaseModel, field_validator
 
 load_dotenv()
 
@@ -71,14 +72,23 @@ ESTIMATED_METRICS = {
 
 class MigrateRequest(BaseModel):
     code: str
-    mode: str  # "demo" | "custom"
+    mode: Literal["demo", "custom"]
+
+    @field_validator("code")
+    @classmethod
+    def code_max_length(cls, v: str) -> str:
+        if len(v) > 15_000:
+            raise ValueError("Code is too long (max 15,000 characters).")
+        return v
 
 
 def parse_llm_output(text: str) -> tuple[str, str]:
-    rust_match = re.search(r"```rust\n(.*?)```", text, re.DOTALL)
-    toml_match = re.search(r"```toml\n(.*?)```", text, re.DOTALL)
-    if not rust_match or not toml_match:
-        raise ValueError("Claude response did not contain expected code blocks")
+    rust_match = re.search(r"```(?:rust|rs)\s*\n(.*?)```", text, re.DOTALL)
+    toml_match = re.search(r"```toml\s*\n(.*?)```", text, re.DOTALL)
+    if not rust_match:
+        raise ValueError("Claude did not return a ```rust block. Try again or simplify the handler.")
+    if not toml_match:
+        raise ValueError("Claude did not return a ```toml block. Try again or simplify the handler.")
     return rust_match.group(1).strip(), toml_match.group(1).strip()
 
 
@@ -110,13 +120,10 @@ async def migrate(req: MigrateRequest):
             },
         }
 
-    if req.mode != "custom":
-        raise HTTPException(status_code=400, detail="mode must be 'demo' or 'custom'")
-
     if len(req.code.strip()) < 20:
         raise HTTPException(status_code=422, detail="Code is too short. Paste a Python Lambda handler.")
 
-    if not re.search(r"def\s+\w+\s*\(\s*event", req.code):
+    if not re.search(r"def\s+\w+\s*\(\s*\w+\s*,\s*\w+\s*\)", req.code):
         raise HTTPException(
             status_code=422,
             detail=(
@@ -127,23 +134,35 @@ async def migrate(req: MigrateRequest):
             ),
         )
 
-    message = client.messages.create(
-        model="claude-sonnet-4-6",
-        max_tokens=4096,
-        system=[
-            {
-                "type": "text",
-                "text": SYSTEM_PROMPT,
-                "cache_control": {"type": "ephemeral"},
-            }
-        ],
-        messages=[
-            {
-                "role": "user",
-                "content": f"Migrate this Python Lambda to Rust:\n\n```python\n{req.code}\n```",
-            }
-        ],
-    )
+    try:
+        message = client.messages.create(
+            model="claude-sonnet-4-6",
+            max_tokens=4096,
+            system=[
+                {
+                    "type": "text",
+                    "text": SYSTEM_PROMPT,
+                    "cache_control": {"type": "ephemeral"},
+                }
+            ],
+            messages=[
+                {
+                    "role": "user",
+                    "content": f"Migrate this Python Lambda to Rust:\n\n```python\n{req.code}\n```",
+                }
+            ],
+        )
+    except anthropic.RateLimitError:
+        raise HTTPException(status_code=429, detail="API rate limit reached. Please wait a few seconds.")
+    except anthropic.APITimeoutError:
+        raise HTTPException(status_code=504, detail="Claude took too long. Try a shorter handler.")
+    except anthropic.APIConnectionError:
+        raise HTTPException(status_code=503, detail="Could not connect to Claude API.")
+    except anthropic.APIError as e:
+        raise HTTPException(status_code=502, detail=f"Claude API error: {e.message}")
+
+    if not message.content:
+        raise HTTPException(status_code=502, detail="Claude returned an empty response.")
 
     raw = message.content[0].text
     try:
