@@ -100,9 +100,9 @@ export function HeroVisual() {
         <circle cx="430" cy="170" r="30" fill="#B87826" fillOpacity="0.08" />
         <circle cx="430" cy="170" r="21" fill="#B87826" fillOpacity="0.13" />
         {/* Arrow shaft */}
-        <line x1="400" y1="170" x2="453" y2="170" stroke="url(#arrowGrad)" strokeWidth="2.5" strokeLinecap="round" />
-        {/* Arrow head — tip at circle edge, vertically centered on y=170 */}
-        <polyline points="443,161 457,170 443,179" fill="none" stroke="#B87826" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+        <line x1="400" y1="170" x2="436" y2="170" stroke="url(#arrowGrad)" strokeWidth="2.5" strokeLinecap="round" />
+        {/* Arrow head — vertically centered on y=170 */}
+        <polyline points="426,161 440,170 426,179" fill="none" stroke="#B87826" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
 
         {/* ── Right panel: Rust ── */}
         <g filter="url(#shadow)">
